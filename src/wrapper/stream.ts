@@ -1,9 +1,15 @@
 import commandExists from "command-exists";
 import * as nodeStream from "stream";
+import { RUNTIME } from "../core/runtime/runtime"
 import { ElevenLabsError } from "../errors/ElevenLabsError";
 import execa from "execa";
 
 export async function stream(audio: nodeStream.Readable): Promise<void> {
+    if (RUNTIME.type !== "node") {
+        throw new ElevenLabsError({
+            message: `This function is only supported in node environments. ${RUNTIME.type} is not supported`
+        })
+    }
     if (!commandExists("mpv")) {
         throw new ElevenLabsError({
             message: `mpv not found, necessary to stream audio."
